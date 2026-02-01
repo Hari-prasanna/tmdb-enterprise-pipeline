@@ -1,0 +1,154 @@
+import oracledb
+import gspread
+import json
+import os
+import pandas as pd
+import requests
+import pytz  # <--- NEW: Import Timezone library
+from datetime import datetime
+from sqlalchemy import create_engine, text
+from oauth2client.service_account import ServiceAccountCredentials
+
+# ==========================================
+# 1. CONFIGURATION
+# ==========================================
+ORACLE_SECRET_PATH = "/Workspace/Users/hari.prasanna.ravichandran@zalando.de/oracle_to_sheets_project/oracle_secret.json"
+GOOGLE_KEY_PATH    = "/Workspace/Users/hari.prasanna.ravichandran@zalando.de/oracle_to_sheets_project/google_key.json"
+
+# Webhook URL
+CHAT_WEBHOOK_URL = "https://chat.googleapis.com/v1/spaces/YOUR_SPACE_ID..."
+
+SHEET_ID      = "Sheet_ID"
+DATA_TAB_NAME = "JOIN"
+TIME_TAB_NAME = "Block_dash"
+
+# ==========================================
+# 2. SQL QUERY
+# ==========================================
+SQL_QUERY = """
+SELECT *
+FROM ZAL_BESTAND zb
+WHERE
+    zb."Category" = 'Beauty'
+    AND zb."Lager" IN ('BGL', 'Finalisierung', 'SZROV','OL_APS','Overstock')
+"""
+
+# ==========================================
+# 3. HELPER FUNCTIONS
+# ==========================================
+def get_oracle_engine():
+    if not os.path.exists(ORACLE_SECRET_PATH):
+        raise FileNotFoundError(f"Missing Oracle Config: {ORACLE_SECRET_PATH}")
+    with open(ORACLE_SECRET_PATH, 'r') as f:
+        config = json.load(f)
+    connection_string = (
+        f"oracle+oracledb://{config['user']}:{config['password']}"
+        f"@{config['host']}:{config['port']}/?service_name={config['service']}"
+    )
+    return create_engine(connection_string)
+
+def get_google_client():
+    if not os.path.exists(GOOGLE_KEY_PATH):
+        raise FileNotFoundError(f"Missing Google Key: {GOOGLE_KEY_PATH}")
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_KEY_PATH, scope)
+    return gspread.authorize(creds)
+
+def send_chat_notification(message, is_error=False):
+    icon = "🚨" if is_error else "✅"
+    payload = {"text": f"{icon} {message}"}
+    try:
+        requests.post(CHAT_WEBHOOK_URL, json=payload)
+    except Exception as e:
+        print(f"⚠️ Failed to send chat notification: {e}")
+
+# ==========================================
+# 4. EXECUTION FLOW
+# ==========================================
+print("🚀 STARTING JOB: Beauty Extract (A-V Only) -> Sheets")
+
+try:
+    # --- STEP 1: FETCH DATA ---
+    print("📡 Querying Oracle Database...")
+    engine = get_oracle_engine()
+    
+    with engine.connect() as connection:
+        df = pd.read_sql(text(SQL_QUERY), connection)
+    
+    raw_count = len(df)
+    print(f"   ✅ Raw Data Extracted: {raw_count} rows.")
+
+    if raw_count > 0:
+        # --- STEP 2: APPLY FILTERS ---
+        
+        # 2a. Filter Rows: MainLhm must start with a digit
+        print("🔍 Filtering Rows: 'MainLhm' must be digits...")
+        lhm_col = next((col for col in df.columns if col.lower() == "mainlhm"), None)
+        
+        if lhm_col:
+            df_filtered = df[df[lhm_col].astype(str).str.match(r'^\d')]
+            print(f"   ✅ Rows Filtered: Kept {len(df_filtered)} / {raw_count}")
+        else:
+            print(f"⚠️ Warning: 'MainLhm' not found. Keeping all rows.")
+            df_filtered = df
+
+        # 2b. Filter Columns: Keep only A through V (First 22 columns)
+        print("✂️  Trimming Columns: Keeping only columns A-V (First 22)...")
+        df_filtered = df_filtered.iloc[:, :22]
+        
+        final_count = len(df_filtered)
+
+        # --- STEP 3: UPLOAD TO SHEETS ---
+        if final_count > 0:
+            print("📋 Connecting to Google Sheets...")
+            client = get_google_client()
+            sh = client.open_by_key(SHEET_ID)
+            
+            # 3a. Update Data Tab (Clear A-V ONLY)
+            print(f"✍️  Updating '{DATA_TAB_NAME}' (Clearing A:V)...")
+            worksheet = sh.worksheet(DATA_TAB_NAME)
+            
+            # Preserve formulas in columns W+
+            worksheet.batch_clear(["A:V"])
+            
+            df_filtered = df_filtered.fillna('')
+            data_to_upload = [df_filtered.columns.values.tolist()] + df_filtered.values.tolist()
+            worksheet.update(range_name="A1", values=data_to_upload)
+
+            # 3b. Update Timestamp (FIXED FOR BERLIN TIME)
+            # We get the 'Europe/Berlin' timezone object
+            berlin_tz = pytz.timezone('Europe/Berlin')
+            # We get 'now' specifically in that timezone
+            current_time = datetime.now(berlin_tz).strftime("%d/%m/%Y %H:%M:%S")
+
+            print(f"⏱️  Updating Timestamp in '{TIME_TAB_NAME}' (Time: {current_time})...")
+            try:
+                time_sheet = sh.worksheet(TIME_TAB_NAME)
+            except gspread.WorksheetNotFound:
+                time_sheet = sh.add_worksheet(title=TIME_TAB_NAME, rows=100, cols=20)
+            time_sheet.update_acell("C2", current_time)
+
+            # --- STEP 4: NOTIFY ---
+            success_msg = (
+                f"**Beauty Report Updated**\n"
+                f"📊 Rows: {final_count}\n"
+                f"✂️ Cols: A-V (W+ preserved)\n"
+                f"🕒 Time: {current_time}"
+            )
+            send_chat_notification(success_msg)
+            print("✅ SUCCESS! Job finished.")
+            
+        else:
+            msg = "Job Ran, but filters removed all rows."
+            print(f"⚠️ {msg}")
+            send_chat_notification(msg, is_error=True)
+            
+    else:
+        msg = "Oracle returned 0 rows for 'Beauty'."
+        print(f"⚠️ {msg}")
+        send_chat_notification(msg, is_error=True)
+
+except Exception as e:
+    error_msg = f"**Job Failed!**\nError: {str(e)}"
+    print(f"❌ {error_msg}")
+    send_chat_notification(error_msg, is_error=True)
