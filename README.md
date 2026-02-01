@@ -1,6 +1,6 @@
 # 👨‍💻 Data | Analytics Engineering Project Portfolio
 
-Welcome to my portfolio! Here you will find end-to-end data|analytics engineering projects focused on automation, cloud integration, and efficient ETL pipelines.
+Welcome to my portfolio! Here you will find end-to-end data | analytics engineering projects focused on automation, cloud integration, and efficient ETL pipelines.
 
 ## 📂 Projects
 
