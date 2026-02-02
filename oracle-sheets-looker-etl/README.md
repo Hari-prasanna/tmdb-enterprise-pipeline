@@ -16,10 +16,10 @@ I developed a **Databricks-based ETL solution** using Python that bypasses the m
 * **Integration:** Pushes processed, lightweight data to Google Sheets to power live **Google Looker Studio** dashboards.
 
 ## 📈 Key Results & Business Impact
-* **🚀 Performance:** Drastically reduced total data update time from **~20 minutes to under 1 minute**, ensuring immediate availability.
+* **🚀 Performance:** Drastically reduced total data update time from **~20-40 minutes to under 1 minute**, ensuring immediate availability.
 * **⚡ Efficiency:** Eliminated **100% of manual data entry** and file handling, removing human error and operational wait times.
 * **🛡️ Reliability:** Solved performance bottlenecks by handling transformations upstream in Python rather than in the spreadsheet.
-* **🎯 Critical Operations:** Enabled the **DG Monitor** to reflect real-time data, allowing the team to strictly maintain **Ludwigsfelde Warehouse (LUU)** thresholds below 20 Liters.
+* **🎯 Critical Operations:** Enabled the [DG Monitor](https://github.com/Hari-prasanna/BI-Tools-Projects/blob/main/LUU-DG-Monitor/README.md) to reflect real-time data, allowing the team to strictly maintain **Ludwigsfelde Warehouse (LUU)** thresholds below 20 Liters.
 * **✅ Transparency:** Implemented automated timestamping on dashboards, giving stakeholders confidence in data freshness for purchasing decisions.
 
 ## 🛠️ Technical Implementation
