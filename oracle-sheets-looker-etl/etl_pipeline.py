@@ -1,24 +1,27 @@
-import oracledb
+# Notebook 1: ETL Logic (Hybrid Engine - Fixed for Missing JAR)
 import gspread
 import json
 import os
+import pytz
 import pandas as pd
-import requests
-import pytz  # <--- NEW: Import Timezone library
 from datetime import datetime
-from sqlalchemy import create_engine, text
 from oauth2client.service_account import ServiceAccountCredentials
+from pyspark.sql.functions import col
+from sqlalchemy import create_engine, text
 
 # ==========================================
-# 1. CONFIGURATION
+# 1. WIDGETS & CONFIGURATION
 # ==========================================
-ORACLE_SECRET_PATH = "/Workspace/Users/hari.prasanna.ravichandran@zalando.de/oracle_to_sheets_project/oracle_secret.json"
-GOOGLE_KEY_PATH    = "/Workspace/Users/hari.prasanna.ravichandran@zalando.de/oracle_to_sheets_project/google_key.json"
+# Create input boxes in the UI
+dbutils.widgets.text("oracle_secret_path", "/Workspace/Users/hari.prasanna.ravichandran@zalando.de/oracle_to_sheets_project/oracle_secret.json", "1. Oracle Config Path")
+dbutils.widgets.text("google_key_path", "/Workspace/Users/hari.prasanna.ravichandran@zalando.de/oracle_to_sheets_project/google_key.json", "2. Google Key Path")
+dbutils.widgets.text("sheet_id", "1bQ-q1-mo3HqLgYUIe45UL9b1G7UaZ2wWjJhfWLP6DU8", "3. Google Sheet ID")
 
-# Webhook URL
-CHAT_WEBHOOK_URL = "https://chat.googleapis.com/v1/spaces/YOUR_SPACE_ID..."
+# Get values
+ORACLE_SECRET_PATH = dbutils.widgets.get("oracle_secret_path")
+GOOGLE_KEY_PATH    = dbutils.widgets.get("google_key_path")
+SHEET_ID           = dbutils.widgets.get("sheet_id")
 
-SHEET_ID      = "Sheet_ID"
 DATA_TAB_NAME = "JOIN"
 TIME_TAB_NAME = "Block_dash"
 
@@ -27,10 +30,9 @@ TIME_TAB_NAME = "Block_dash"
 # ==========================================
 SQL_QUERY = """
 SELECT *
-FROM ZAL_BESTAND zb
-WHERE
-    zb."Category" = 'Beauty'
-    AND zb."Lager" IN ('BGL', 'Finalisierung', 'SZROV','OL_APS','Overstock')
+FROM ZAL_BESTAND
+WHERE "Category" = 'Beauty'
+  AND "Lager" IN ('BGL', 'Finalisierung', 'SZROV','OL_APS','Overstock')
 """
 
 # ==========================================
@@ -38,9 +40,11 @@ WHERE
 # ==========================================
 def get_oracle_engine():
     if not os.path.exists(ORACLE_SECRET_PATH):
-        raise FileNotFoundError(f"Missing Oracle Config: {ORACLE_SECRET_PATH}")
+        raise FileNotFoundError(f"Missing Oracle Config at: {ORACLE_SECRET_PATH}")
     with open(ORACLE_SECRET_PATH, 'r') as f:
         config = json.load(f)
+    
+    # Create SQLAlchemy Engine using the Python Driver
     connection_string = (
         f"oracle+oracledb://{config['user']}:{config['password']}"
         f"@{config['host']}:{config['port']}/?service_name={config['service']}"
@@ -49,106 +53,81 @@ def get_oracle_engine():
 
 def get_google_client():
     if not os.path.exists(GOOGLE_KEY_PATH):
-        raise FileNotFoundError(f"Missing Google Key: {GOOGLE_KEY_PATH}")
+        raise FileNotFoundError(f"Missing Google Key at: {GOOGLE_KEY_PATH}")
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_KEY_PATH, scope)
     return gspread.authorize(creds)
 
-def send_chat_notification(message, is_error=False):
-    icon = "🚨" if is_error else "✅"
-    payload = {"text": f"{icon} {message}"}
-    try:
-        requests.post(CHAT_WEBHOOK_URL, json=payload)
-    except Exception as e:
-        print(f"⚠️ Failed to send chat notification: {e}")
-
 # ==========================================
 # 4. EXECUTION FLOW
 # ==========================================
-print("🚀 STARTING JOB: Beauty Extract (A-V Only) -> Sheets")
-
 try:
-    # --- STEP 1: FETCH DATA ---
-    print("📡 Querying Oracle Database...")
+    print("🚀 Starting ETL Job (Hybrid Engine)...")
+    
+    # --- STEP 1: EXTRACT (Python Driver) ---
+    print("📡 Connecting to Oracle (Python Mode)...")
     engine = get_oracle_engine()
     
     with engine.connect() as connection:
-        df = pd.read_sql(text(SQL_QUERY), connection)
+        pdf_raw = pd.read_sql(text(SQL_QUERY), connection)
     
-    raw_count = len(df)
+    raw_count = len(pdf_raw)
     print(f"   ✅ Raw Data Extracted: {raw_count} rows.")
 
     if raw_count > 0:
-        # --- STEP 2: APPLY FILTERS ---
+        # --- STEP 2: TRANSFORM (Switch to Spark) ---
+        print("⚡ Converting to Spark for Transformation...")
         
-        # 2a. Filter Rows: MainLhm must start with a digit
-        print("🔍 Filtering Rows: 'MainLhm' must be digits...")
-        lhm_col = next((col for col in df.columns if col.lower() == "mainlhm"), None)
+        # Create Spark DataFrame (This is the "Magic Move" for your resume)
+        df = spark.createDataFrame(pdf_raw)
+
+        print("🔍 Applying Spark Filters...")
+        # Now we use PySpark syntax just like a Big Data Engineer
+        df_filtered = df.filter(col("MainLhm").rlike(r"^\d"))
         
-        if lhm_col:
-            df_filtered = df[df[lhm_col].astype(str).str.match(r'^\d')]
-            print(f"   ✅ Rows Filtered: Kept {len(df_filtered)} / {raw_count}")
-        else:
-            print(f"⚠️ Warning: 'MainLhm' not found. Keeping all rows.")
-            df_filtered = df
+        # Select first 22 columns
+        cols_to_keep = df_filtered.columns[:22]
+        df_final = df_filtered.select(cols_to_keep)
 
-        # 2b. Filter Columns: Keep only A through V (First 22 columns)
-        print("✂️  Trimming Columns: Keeping only columns A-V (First 22)...")
-        df_filtered = df_filtered.iloc[:, :22]
+        # --- STEP 3: LOAD (Google Sheets) ---
+        print("📋 Preparing Upload...")
+        # Convert back to Pandas for GSpread (GSpread doesn't support Spark directly)
+        final_pdf = df_final.toPandas()
+        final_pdf = final_pdf.fillna('')
+        final_count = len(final_pdf)
         
-        final_count = len(df_filtered)
+        print(f"📋 Uploading {final_count} rows to Sheets...")
+        client = get_google_client()
+        sh = client.open_by_key(SHEET_ID)
+        
+        # Clear & Update Data
+        sh.worksheet(DATA_TAB_NAME).batch_clear(["A:V"])
+        sh.worksheet(DATA_TAB_NAME).update(range_name="A1", values=[final_pdf.columns.values.tolist()] + final_pdf.values.tolist())
+        
+        # Update Timestamp
+        berlin_tz = pytz.timezone('Europe/Berlin')
+        current_time = datetime.now(berlin_tz).strftime("%d/%m/%Y %H:%M:%S")
+        try:
+            sh.worksheet(TIME_TAB_NAME).update_acell("C2", current_time)
+        except:
+            pass
 
-        # --- STEP 3: UPLOAD TO SHEETS ---
-        if final_count > 0:
-            print("📋 Connecting to Google Sheets...")
-            client = get_google_client()
-            sh = client.open_by_key(SHEET_ID)
-            
-            # 3a. Update Data Tab (Clear A-V ONLY)
-            print(f"✍️  Updating '{DATA_TAB_NAME}' (Clearing A:V)...")
-            worksheet = sh.worksheet(DATA_TAB_NAME)
-            
-            # Preserve formulas in columns W+
-            worksheet.batch_clear(["A:V"])
-            
-            df_filtered = df_filtered.fillna('')
-            data_to_upload = [df_filtered.columns.values.tolist()] + df_filtered.values.tolist()
-            worksheet.update(range_name="A1", values=data_to_upload)
-
-            # 3b. Update Timestamp (FIXED FOR BERLIN TIME)
-            # We get the 'Europe/Berlin' timezone object
-            berlin_tz = pytz.timezone('Europe/Berlin')
-            # We get 'now' specifically in that timezone
-            current_time = datetime.now(berlin_tz).strftime("%d/%m/%Y %H:%M:%S")
-
-            print(f"⏱️  Updating Timestamp in '{TIME_TAB_NAME}' (Time: {current_time})...")
-            try:
-                time_sheet = sh.worksheet(TIME_TAB_NAME)
-            except gspread.WorksheetNotFound:
-                time_sheet = sh.add_worksheet(title=TIME_TAB_NAME, rows=100, cols=20)
-            time_sheet.update_acell("C2", current_time)
-
-            # --- STEP 4: NOTIFY ---
-            success_msg = (
-                f"**Beauty Report Updated**\n"
-                f"📊 Rows: {final_count}\n"
-                f"✂️ Cols: A-V (W+ preserved)\n"
-                f"🕒 Time: {current_time}"
-            )
-            send_chat_notification(success_msg)
-            print("✅ SUCCESS! Job finished.")
-            
-        else:
-            msg = "Job Ran, but filters removed all rows."
-            print(f"⚠️ {msg}")
-            send_chat_notification(msg, is_error=True)
-            
+        # --- SAVE SUCCESS STATE ---
+        print(f"✅ SUCCESS! Saving Task Values: Rows={final_count}")
+        dbutils.jobs.taskValues.set(key="status", value="SUCCESS")
+        dbutils.jobs.taskValues.set(key="rows", value=final_count)
+        dbutils.jobs.taskValues.set(key="run_time", value=current_time)
+        dbutils.jobs.taskValues.set(key="error_msg", value="") 
+    
     else:
-        msg = "Oracle returned 0 rows for 'Beauty'."
-        print(f"⚠️ {msg}")
-        send_chat_notification(msg, is_error=True)
+        raise ValueError("Job ran, but Oracle returned 0 rows.")
 
 except Exception as e:
-    error_msg = f"**Job Failed!**\nError: {str(e)}"
-    print(f"❌ {error_msg}")
-    send_chat_notification(error_msg, is_error=True)
+    # --- SAVE FAILURE STATE ---
+    print(f"❌ FAILED! Error: {str(e)}")
+    dbutils.jobs.taskValues.set(key="status", value="FAILURE")
+    dbutils.jobs.taskValues.set(key="error_msg", value=str(e))
+    dbutils.jobs.taskValues.set(key="rows", value=0)
+    dbutils.jobs.taskValues.set(key="run_time", value="Failed Run")
+    # Raise error so the job marks as failed
+    raise e
