@@ -4,15 +4,15 @@ import json
 # ==========================================
 # 1. WIDGETS & CONFIGURATION
 # ==========================================
-dbutils.widgets.text("webhook_url", "https://chat.googleapis.com/v1/spaces/AAQAoCEBkDw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=BGLFZVMtErUbXs_LaMwHtmvhomTPvt36JtHBDMbDQ0o", "1. Google Chat Webhook")
+dbutils.widgets.text("webhook_url", "https://chat.googleapis.com/v1/spaces/...", "1. Google Chat Webhook")
 dbutils.widgets.text("previous_task_name", "ETL_Task", "3. Previous Task Name")
 
 CHAT_WEBHOOK_URL = dbutils.widgets.get("webhook_url")
 PREVIOUS_TASK_KEY = dbutils.widgets.get("previous_task_name")
 
 # -- URLs from your request --
-DASHBOARD_URL = "https://lookerstudio.google.com/u/0/reporting/ceba80f6-aad8-45e1-9e40-d34b32f1827b/page/p_szphsjtwmd"
-MANUAL_SHEET_URL = "https://docs.google.com/spreadsheets/d/1bQ-q1-mo3HqLgYUIe45UL9b1G7UaZ2wWjJhfWLP6DU8/edit?gid=1155322452#gid=1155322452"
+DASHBOARD_URL = "https://lookerstudio.google.com/u/0/reporting/..."
+MANUAL_SHEET_URL = "https://docs.google.com/spreadsheets/d/..."
 
 # ==========================================
 # 2. FUNCTION DEFINITION
