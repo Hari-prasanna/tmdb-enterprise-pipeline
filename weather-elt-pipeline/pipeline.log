@@ -1,0 +1,30 @@
+=====================================
+Pipeline started at: Thu Feb 19 18:53:21 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-02-18 to 2026-02-18 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+✅ Success! Data Upserted gracefully.
+🎉 Pipeline finished successfully!
+Running dbt transformations...
+[0m17:53:25  Running with dbt=1.10.19
+[0m17:53:25  Registered adapter: postgres=1.9.1
+[0m17:53:25  Found 3 models, 1 source, 447 macros
+[0m17:53:25  
+[0m17:53:25  Concurrency: 1 threads (target='prod')
+[0m17:53:25  
+[0m17:53:26  1 of 3 START sql view model marts.stg_weather .................................. [RUN]
+[0m17:53:26  1 of 3 OK created sql view model marts.stg_weather ............................. [[32mCREATE VIEW[0m in 0.10s]
+[0m17:53:26  2 of 3 START sql table model marts.fct_weather ................................. [RUN]
+[0m17:53:26  2 of 3 OK created sql table model marts.fct_weather ............................ [[32mSELECT 15948[0m in 0.10s]
+[0m17:53:26  3 of 3 START sql table model marts.fct_weather_daily ........................... [RUN]
+[0m17:53:26  3 of 3 OK created sql table model marts.fct_weather_daily ...................... [[32mSELECT 670[0m in 0.06s]
+[0m17:53:26  
+[0m17:53:26  Finished running 2 table models, 1 view model in 0 hours 0 minutes and 0.53 seconds (0.53s).
+[0m17:53:26  
+[0m17:53:26  [32mCompleted successfully[0m
+[0m17:53:26  
+[0m17:53:26  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
+Pipeline finished at: Thu Feb 19 18:53:27 CET 2026
+=====================================

@@ -1,0 +1,15 @@
+# Security
+.env
+
+# Virtual Environments
+venv/
+__pycache__/
+
+# dbt logs and compiled code
+weather_transform/logs/
+weather_transform/target/
+weather_transform/dbt_packages/
+
+# System files
+.DS_Store
+pipeline.log

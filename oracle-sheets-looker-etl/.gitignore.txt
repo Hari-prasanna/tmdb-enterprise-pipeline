@@ -1,0 +1,10 @@
+# Ignore Secrets and Credentials
+*.json
+oracle_secret.json
+google_key.json
+.env
+
+# Ignore Python Cache files
+__pycache__/
+*.pyc
+.ipynb_checkpoints
