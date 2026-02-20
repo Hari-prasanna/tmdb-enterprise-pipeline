@@ -28,3 +28,41 @@ Running dbt transformations...
 [0m17:53:26  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
 Pipeline finished at: Thu Feb 19 18:53:27 CET 2026
 =====================================
+=====================================
+Pipeline started at: Fri Feb 20 06:16:51 CET 2026
+Running Python Extraction...
+/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/run_pipeline.sh: line 14: python: command not found
+Running dbt transformations...
+/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/run_pipeline.sh: line 21: dbt: command not found
+Pipeline finished at: Fri Feb 20 06:16:51 CET 2026
+=====================================
+=====================================
+Pipeline started at: Fri Feb 20 08:52:29 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-02-19 to 2026-02-19 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+✅ Success! Data Upserted gracefully.
+🎉 Pipeline finished successfully!
+Running dbt transformations...
+[0m07:52:47  Running with dbt=1.10.19
+[0m07:52:47  Registered adapter: postgres=1.9.1
+[0m07:52:48  Found 3 models, 1 source, 447 macros
+[0m07:52:48  
+[0m07:52:48  Concurrency: 1 threads (target='prod')
+[0m07:52:48  
+[0m07:52:48  1 of 3 START sql view model marts.stg_weather .................................. [RUN]
+[0m07:52:49  1 of 3 OK created sql view model marts.stg_weather ............................. [[32mCREATE VIEW[0m in 0.18s]
+[0m07:52:49  2 of 3 START sql table model marts.fct_weather ................................. [RUN]
+[0m07:52:49  2 of 3 OK created sql table model marts.fct_weather ............................ [[32mSELECT 16188[0m in 0.15s]
+[0m07:52:49  3 of 3 START sql table model marts.fct_weather_daily ........................... [RUN]
+[0m07:52:49  3 of 3 OK created sql table model marts.fct_weather_daily ...................... [[32mSELECT 680[0m in 0.10s]
+[0m07:52:49  
+[0m07:52:49  Finished running 2 table models, 1 view model in 0 hours 0 minutes and 0.74 seconds (0.74s).
+[0m07:52:49  
+[0m07:52:49  [32mCompleted successfully[0m
+[0m07:52:49  
+[0m07:52:49  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
+Pipeline finished at: Fri Feb 20 08:52:51 CET 2026
+=====================================
