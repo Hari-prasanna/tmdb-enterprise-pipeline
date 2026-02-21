@@ -1,0 +1,28 @@
+### **The Bouncer: Your `.gitignore` File 🛑**
+
+Now, let's lock down your security. We need to tell GitHub to ignore your passwords, your heavy Python uniform, the raw data files, and the temporary logs dbt makes.
+
+Create a new file in your main `luu-returns-pipeline` folder and name it exactly:
+**`.gitignore`** *(Don't forget the dot at the beginning!)*
+
+Paste this exact content into that file and save it:
+
+```text
+# Security (NEVER upload passwords)
+.env
+
+# Python Environment
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# Local Data Files
+*.csv
+luu_inbound_data.csv
+
+# dbt Artifacts (Temporary files dbt creates when running)
+luu_transformations/target/
+luu_transformations/dbt_packages/
+luu_transformations/logs/
