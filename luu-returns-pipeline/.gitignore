@@ -15,3 +15,6 @@ __pycache__/
 luu_transformations/target/
 luu_transformations/dbt_packages/
 luu_transformations/logs/
+
+# os files
+.DS_Store

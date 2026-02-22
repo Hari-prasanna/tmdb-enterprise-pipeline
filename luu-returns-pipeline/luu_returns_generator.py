@@ -3,89 +3,150 @@ from faker import Faker
 import random
 from datetime import datetime, timedelta
 
-# Wake up our "Improv Actor"
 fake = Faker()
 
-def generate_luu_network_data(num_records=200):
-    print(f"🏭 LUU Hub active! Generating {num_records} inbound items from the logistics network...")
+def generate_luu_network_data(num_carriers=20):
+    print(f"🏭 LUU Hub active! Generating {num_carriers} Load Carriers...")
     
     packages = []
     
-    # Origin FCs and Categories
-    origin_fcs = ['Erfurt (ERF)', 'Mönchengladbach (MG)', 'Lahr (LH)', 'Szczecin (POZ)']
-    item_categories = ['ZFS Defect', 'Overstock', 'Expiring Beauty', 'Zalando SE']
+    sites = [
+        {'name': 'Erfurt', 'type': 'FC'},
+        {'name': 'Mönchengladbach', 'type': 'FC'},
+        {'name': 'Lahr', 'type': 'FC'},
+        {'name': 'Verona', 'type': 'FC'},
+        {'name': 'Szczecin', 'type': 'RC'},
+        {'name': 'Lodz', 'type': 'RC'},
+        {'name': 'Glowno', 'type': 'RC'}
+    ]
     
-    # Operator grades (None = Operator forgot to scan!)
-    operator_grades = ['A', 'B', 'C', 'D', None] 
+    statuses = ['Dispatched', 'In Transit', 'Delayed', 'Arrived']
 
-    for _ in range(num_records):
-        # 1. Base Information
-        item_id = fake.unique.bothify(text='ITEM-#########')
-        origin_site = random.choice(origin_fcs)
-        category = random.choice(item_categories)
-        grade = random.choice(operator_grades)
+    # --- LEVEL 1: THE LOAD CARRIER (PALLET) LOOP ---
+    for _ in range(num_carriers):
+    # Create a 3-letter abbreviation of the origin site (e.g., Erfurt -> ERF)
+        site = random.choice(sites)
+       
+        origin_abbr = site['name'][:3].upper()
+        # Build the LPN: LPN-ERF-12345-LUU
+        load_carrier_id = f"LPN-{origin_abbr}-{random.randint(10000, 99999)}-LUU"
         
-        # 2. LUU Routing Logic
-        if grade == 'A':
-            destination = 'Outlet Stores'
-        elif grade == 'B':
-            destination = random.choice(['Outlet Stores', 'Overstock Partners'])
-        elif grade in ['C', 'D']:
-            if category == 'ZFS Defect' and grade == 'D' and random.random() < 0.2:
-                destination = 'Recycle Partners'
-            else:
-                destination = 'Overstock Partners'
+  
+        
+        # 🚨 CHAOS: Messy Origin Site strings
+        origin_site = site['name']
+        if random.random() < 0.10:
+            origin_site = f"   {origin_site}  "
+            
+        site_type = site['type']
+        carrier_status = random.choice(statuses)
+
+        # Timestamps (Stripped exactly to the second)
+        dispatch = fake.date_time_between(start_date='-14d', end_date='now').replace(microsecond=0)
+        
+        arrived = None
+        if carrier_status == 'Arrived':
+            transit_time = timedelta(days=random.randint(1, 3), hours=random.randint(1, 23), minutes=random.randint(1, 59))
+            arrived = (dispatch + transit_time).replace(microsecond=0)
+
+        # 🚨 CHAOS: The Time Machine (Arrival before dispatch)
+        if arrived and random.random() < 0.05:
+            arrived = (dispatch - timedelta(hours=random.randint(1, 48))).replace(microsecond=0)
+
+        carrier_comment = None
+        if carrier_status == 'Delayed':
+            carrier_comment = random.choice([' weather delay ', 'CUSTOMS_HOLD', 'truck_breakdown', '  missing paperwork'])
         else:
-            destination = 'Buffer Area (Missing Grade)'
+            carrier_comment = random.choice([' standard handling', 'ALL_GOOD', 'ok', '   '])
 
-        # 3. Timestamps
-        dispatch = fake.date_between(start_date='-14d', end_date='today')
-        arrived = dispatch + timedelta(days=random.randint(1, 4))
+        # --- LEVEL 2: THE ITEMS INSIDE THE CARRIER LOOP ---
+        num_items = random.randint(10, 25) # 10 to 25 items per pallet
         
-        # 4. Weight
-        weight = round(random.uniform(0.1, 3.5), 2)
-
-        # ---------------------------------------------------------
-        # 🚨 THE CHAOS INJECTION ZONE (For dbt testing later) 🚨
-        # ---------------------------------------------------------
-        
-        chaos_roll = random.random()
-        
-        # ERROR 1: The Broken Scale (5% chance of negative weight)
-        if chaos_roll < 0.05:
-            weight = -abs(weight) 
+        for _ in range(num_items):
+            item_id = fake.unique.bothify(text='ITEM-#########')
             
-        # ERROR 2: The Time Machine (5% chance arrival is BEFORE dispatch)
-        elif 0.05 <= chaos_roll < 0.10:
-            arrived = dispatch - timedelta(days=random.randint(1, 3))
+            # Base Category & Quality
+            if site_type == 'FC':
+                category = random.choices(['Zalando SE', 'Expiring Beauty'], weights=[85, 15])[0]
+                incoming_quality = 'A' if category == 'Zalando SE (Overstock)' else random.choices(['A', 'B'], weights=[70, 30])[0]
+                
+                # 🚨 CHAOS: The Mixed Pallet (Customer Return accidentally put in an FC pallet)
+                if random.random() < 0.05:
+                    category = 'Customer Return'
+            else:
+                category = random.choices(['Customer Return', 'ZFS Defect'], weights=[80, 20])[0]
+                incoming_quality = random.choices(['A', 'B', 'C', 'D'], weights=[40, 30, 20, 10])[0]
+
+            # Operator Assessment (Degradation)
+            # If it hasn't arrived, it shouldn't be assessed yet...
+            assessed_grade = None
+            if carrier_status == 'Arrived':
+                if incoming_quality == 'A':
+                    assessed_grade = random.choices(['A', 'B', 'C'], weights=[80, 15, 5])[0]
+                elif incoming_quality == 'B':
+                    assessed_grade = random.choices(['B', 'C', 'D'], weights=[70, 20, 10])[0]
+                elif incoming_quality == 'C':
+                    assessed_grade = random.choices(['C', 'D'], weights=[80, 20])[0]
+                else:
+                    assessed_grade = 'D'
+                    
+                # 5% chance operator forgets to grade
+                if random.random() < 0.05:
+                    assessed_grade = None
             
-        # ---------------------------------------------------------
+            # 🚨 CHAOS: The Ghost Scan (Item assessed even though the truck is "In Transit")
+            if carrier_status == 'In Transit' and random.random() < 0.05:
+                assessed_grade = 'A' 
 
-        # 5. Build the record
-        package = {
-            "item_id": item_id,
-            "origin_site": origin_site,
-            "item_category": category,
-            "operator_grade": grade,
-            "routed_destination": destination,
-            "weight_kg": weight,
-            "dispatch_date_from_fc": dispatch,
-            "arrived_date_at_luu": arrived 
-        }
-        packages.append(package)
+            # Quality Notes
+            quality_note = None
+            if assessed_grade in ['A', 'B']:
+                quality_note = random.choice(['Mint condition', ' original packaging', 'MINOR SCUFFS', 'perfect'])
+            if assessed_grade in ['C', 'D'] and random.random() < 0.05:
+                quality_note = "system_error_note_added"
 
-    # ERROR 3: The Double Scan (Duplicate 5 random rows at the end)
+            # Routing Destination
+            destination = 'Overstock Partners'
+            if assessed_grade == 'A':
+                destination = 'Outlet Stores'
+            elif assessed_grade == 'B':
+                destination = random.choice(['Outlet Stores', 'Overstock Partners'])
+            elif assessed_grade in ['C', 'D'] and category == 'ZFS Defect' and random.random() < 0.2:
+                destination = 'Recycle Partners'
+            elif not assessed_grade:
+                 destination = 'Pending Assessment'
+
+            weight = round(random.uniform(0.1, 3.5), 2)
+            # 🚨 CHAOS: Negative weight
+            if random.random() < 0.05:
+                weight = -abs(weight) 
+
+            # Build the denormalized flat record
+            packages.append({
+                "load_carrier_id": load_carrier_id, # The Pallet
+                "origin_site": origin_site,
+                "site_type": site_type,
+                "carrier_status": carrier_status,
+                "dispatch_timestamp": dispatch,
+                "arrived_timestamp": arrived,
+                "carrier_comments": carrier_comment,
+                "item_id": item_id,                 # The Item inside
+                "item_category": category,
+                "incoming_quality": incoming_quality,
+                "assessed_grade": assessed_grade,
+                "quality_note": quality_note,
+                "weight_kg": weight,
+                "routed_destination": destination
+            })
+
+    # 🚨 CHAOS: The Double Scan (Duplicate 5 items at the end)
     duplicates = random.sample(packages, 5)
     packages.extend(duplicates)
     
-    # Note: Because of duplicates, we will end up with 205 rows instead of 200!
-
-    # Hand to Pandas and save
     df = pd.DataFrame(packages)
     file_name = "luu_inbound_data.csv"
     df.to_csv(file_name, index=False)
-    
-    print(f"✅ Success! Sorted {len(packages)} items (including intentional errors) into {file_name}")
+    print(f"✅ Success! Generated {len(packages)} items packed into {num_carriers} Load Carriers!")
 
 if __name__ == "__main__":
-    generate_luu_network_data(200)
+    generate_luu_network_data(20)
