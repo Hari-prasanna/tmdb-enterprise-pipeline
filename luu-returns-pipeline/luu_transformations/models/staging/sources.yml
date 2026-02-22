@@ -1,0 +1,9 @@
+version: 2 
+
+sources:
+  - name: raw_data
+    database: luu_warehouse
+    schema: raw
+    tables:
+      - name: inbound_packages
+        description: "fake/dummy data generator using faker lib"

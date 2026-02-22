@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_inbound_packages
+    description: "Cleaned and deduplicated inbound logistics data at the LUU Hub."
+    columns:
+      - name: item_id
+        description: "The unique identifier for the scanned item."
+        tests:
+          - unique
+          - not_null
+
+      - name: load_carrier_id
+        description: "The pallet or cage the item arrived in."
+        tests:
+          - not_null
+
+      - name: destination_quality
+        description: "The grade assigned by the LUU operator."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['A', 'B', 'C', 'D']
+              # We allow nulls here because we know operators sometimes forget to scan!
+              config:
+                warn_if: "> 10" # Just give a warning if more than 10 are weird

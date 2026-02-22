@@ -1,0 +1,31 @@
+version: 2
+
+models: 
+  # --- THE DIMENSION TABLE ---
+  - name: dim_load_carriers
+    description: "One row per pallet/load carrier. Tracks network SLAs and transit times."
+    columns:
+      - name: load_carrier_id
+        description: "The Primary Key of the pallet."
+        tests:
+          - unique
+          - not_null
+
+  # --- THE FACT TABLE ---
+  - name: fact_processed_items
+    description: "One row per item. Tracks quality degradation and physical attributes."
+    columns:
+      - name: item_id
+        description: "The Primary Key of the individual item."
+        tests:
+          - unique
+          - not_null
+
+      - name: load_carrier_id
+        description: "The Foreign Key pointing to the pallet this item arrived in."
+        tests:
+          # This is how dbt tests Foreign Keys!
+          - relationships:
+              arguments:
+                to: ref('dim_load_carriers')
+                field: load_carrier_id
