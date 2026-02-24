@@ -1,4 +1,4 @@
-{%snapshot load_carriers%}
+{%snapshot scd_load_carriers%}
 
 {{
     config(
