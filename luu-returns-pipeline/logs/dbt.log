@@ -1,0 +1,32 @@
+[0m19:43:20.227139 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x107cf7460>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108d89130>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108d89460>]}
+
+
+============================== 19:43:20.229397 | 29796221-b1c8-4f4b-8295-a5c89f2a1686 ==============================
+[0m19:43:20.229397 [info ] [MainThread]: Running with dbt=1.10.19
+[0m19:43:20.229655 [debug] [MainThread]: running dbt with arguments {'version_check': 'True', 'write_json': 'True', 'log_format': 'default', 'log_path': 'logs', 'cache_selected_only': 'False', 'send_anonymous_usage_stats': 'True', 'log_cache_events': 'False', 'profiles_dir': '/Users/hp/.dbt', 'use_colors': 'True', 'partial_parse': 'True', 'printer_width': '80', 'fail_fast': 'False', 'use_experimental_parser': 'False', 'quiet': 'False', 'target_path': 'None', 'introspect': 'True', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'indirect_selection': 'eager', 'no_print': 'None', 'empty': 'False', 'invocation_command': 'dbt run --select dim_load_carriers_history --target prod', 'warn_error': 'None', 'debug': 'False'}
+[0m19:43:20.229937 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/hp/Development/Data-Analytics-engineering-portfolio/luu-returns-pipeline/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m19:43:20.231377 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": false, "command_wall_clock_time": 0.03904929, "process_in_blocks": "0", "process_kernel_time": 0.117154, "process_mem_max_rss": "97337344", "process_out_blocks": "0", "process_user_time": 0.547924}
+[0m19:43:20.231619 [debug] [MainThread]: Command `dbt run` failed at 19:43:20.231563 after 0.04 seconds
+[0m19:43:20.231785 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x107cf7460>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108d32ee0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108d321c0>]}
+[0m19:43:20.231937 [debug] [MainThread]: Flushing usage events
+[0m19:43:23.869585 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m19:44:03.349643 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109c63400>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10acf5160>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10acf5490>]}
+
+
+============================== 19:44:03.351381 | 16241514-f891-44f6-8eaf-dae87b76c224 ==============================
+[0m19:44:03.351381 [info ] [MainThread]: Running with dbt=1.10.19
+[0m19:44:03.351649 [debug] [MainThread]: running dbt with arguments {'use_colors': 'True', 'empty': 'False', 'cache_selected_only': 'False', 'printer_width': '80', 'log_format': 'default', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'fail_fast': 'False', 'log_cache_events': 'False', 'partial_parse': 'True', 'profiles_dir': '/Users/hp/.dbt', 'invocation_command': 'dbt run --select dim_load_carriers_history --target prod', 'debug': 'False', 'static_parser': 'True', 'indirect_selection': 'eager', 'warn_error': 'None', 'use_experimental_parser': 'False', 'introspect': 'True', 'no_print': 'None', 'send_anonymous_usage_stats': 'True', 'log_path': 'logs', 'write_json': 'True', 'quiet': 'False', 'version_check': 'True'}
+[0m19:44:03.351886 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/hp/Development/Data-Analytics-engineering-portfolio/luu-returns-pipeline/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m19:44:03.352883 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": false, "command_wall_clock_time": 0.033498626, "process_in_blocks": "0", "process_kernel_time": 0.061948, "process_mem_max_rss": "97042432", "process_out_blocks": "0", "process_user_time": 0.542261}
+[0m19:44:03.353076 [debug] [MainThread]: Command `dbt run` failed at 19:44:03.353037 after 0.03 seconds
+[0m19:44:03.353219 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109c63400>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10aca1e20>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10acf52b0>]}
+[0m19:44:03.353356 [debug] [MainThread]: Flushing usage events
+[0m19:44:03.858186 [debug] [MainThread]: An error was encountered while trying to flush usage events
