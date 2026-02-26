@@ -21,20 +21,7 @@ This project was a deep dive into "Under the Hood" software engineering. Here ar
 
 ## 🏗️ How It Works (Architecture)
 
-```mermaid
-graph LR
-    subgraph Step 1: Extract & Load
-    A[Open-Meteo API] -->|Python script| B[(Postgres: Raw Data)]
-    end
-    
-    subgraph Step 2: Transform
-    B -->|dbt models| C[(Postgres: Clean Data)]
-    end
-
-    subgraph Step 3: Automation
-    D[Mac Background Scheduler] -->|Triggers| A
-    end
-```
+![Weather ELT Architecture](weather_architecture.jpg)
 
 ## 🛠️ Tech Stack Used
 * **Python (Pandas, Requests):** For connecting to the API and extracting the data.
@@ -73,3 +60,4 @@ Run the automation script to extract the data and build the dbt models:
 ```bash
 ./run_pipeline.sh
 ```
+
