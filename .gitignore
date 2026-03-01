@@ -1,0 +1,13 @@
+# Ignore Mac system files
+.DS_Store
+**/.DS_Store
+
+# Ignore Python environments
+venv/
+venv
+.env
+
+# Ignore dbt logs and target folders (these get massive!)
+logs/
+target/
+dbt_packages/
