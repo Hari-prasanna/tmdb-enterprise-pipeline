@@ -1,0 +1,12 @@
+version 2:
+
+sources:
+  - name: 'raw_data'
+    schema: 'raw'
+    tables:
+      - name: 'raw_movies'
+        description: 'Holds the main data - release_date, title, etc'
+      - name: 'raw_movie_details'
+        description: 'Holds the budget, profit, can help with ROI'
+      - name: 'raw_movie_credits' 
+        description: 'holds cast and crew like actor and director name' 
