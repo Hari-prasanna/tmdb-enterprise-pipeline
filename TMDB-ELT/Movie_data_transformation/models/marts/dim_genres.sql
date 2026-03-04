@@ -8,7 +8,7 @@ unpacked_genres AS (
     FROM raw_details
 )
 
-SELECT 
+SELECT DISTINCT
     (genre_json ->> 'id')::INT AS genre_id,
     genre_json ->> 'name' AS genre_name
 FROM unpacked_genres
