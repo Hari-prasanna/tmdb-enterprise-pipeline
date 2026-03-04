@@ -1,132 +1,230 @@
-import requests
-import time
-import os
-import pandas as pd
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
+"""
+TMDB Movie Data Pipeline
+=========================
+Extracts movie data from The Movie Database (TMDB) API and loads it into PostgreSQL.
+
+Pipeline Steps:
+1. Fetch base movie listings (discover endpoint)
+2. Fetch detailed movie information and credits
+3. Load all data into raw PostgreSQL tables
+"""
+
 import json
+import os
+import time
+from datetime import datetime, timezone
 
-# ==========================================
-# 0. SETUP
-# ==========================================
-print("🔐 Loading credentials...")
-load_dotenv()
+import pandas as pd
+import requests
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, Engine
 
-TMDB_API_KEY = os.getenv("TMDB_API_KEY")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
 
-db_url = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-engine = create_engine(db_url)
+TMDB_BASE_URL = "https://api.themoviedb.org/3"
+RELEASE_DATE_START = "2026-01-01"
+RELEASE_DATE_END = "2026-12-31"
+DEFAULT_MAX_PAGES = 20
+API_RATE_LIMIT_DELAY = 0.1
+PROGRESS_LOG_INTERVAL = 20
 
-# ==========================================
-# 1. EXTRACT: Table 1 (Discover Movies)
-# ==========================================
-def fetch_base_movies(api_key, max_pages=5):
-    """Fetches the base movies from 2025-2026."""
-    url = "https://api.themoviedb.org/3/discover/movie"
+
+def get_database_engine() -> Engine:
+    """Create and return a SQLAlchemy database engine."""
+    load_dotenv()
+
+    db_config = {
+        "user": os.getenv("DB_USER"),
+        "password": os.getenv("DB_PASSWORD"),
+        "host": os.getenv("DB_HOST"),
+        "port": os.getenv("DB_PORT"),
+        "name": os.getenv("DB_NAME"),
+    }
+
+    connection_url = (
+        f"postgresql+psycopg2://{db_config['user']}:{db_config['password']}"
+        f"@{db_config['host']}:{db_config['port']}/{db_config['name']}"
+    )
+
+    return create_engine(connection_url)
+
+
+def get_api_key() -> str:
+    """Load and return the TMDB API key from environment variables."""
+    load_dotenv()
+    return os.getenv("TMDB_API_KEY")
+
+
+# =============================================================================
+# EXTRACT: Fetch Base Movies
+# =============================================================================
+
+def fetch_base_movies(api_key: str, max_pages: int = DEFAULT_MAX_PAGES) -> list[dict]:
+    """
+    Fetch base movie listings from TMDB discover endpoint.
+
+    Args:
+        api_key: TMDB API authentication key
+        max_pages: Maximum number of pages to fetch (default: 20)
+
+    Returns:
+        List of movie dictionaries from the discover endpoint
+    """
+    url = f"{TMDB_BASE_URL}/discover/movie"
     movies = []
-    
-    print(f"\n🚚 1. Fetching {max_pages} pages of base movies...")
+
+    print(f"\n🚚 Step 1: Fetching {max_pages} pages of base movies...")
+
     for page_num in range(1, max_pages + 1):
         params = {
-            "api_key": api_key, "language": "en-US",
-            "primary_release_date.gte": "2025-01-01",
-            "primary_release_date.lte": "2026-12-31",
-            "sort_by": "popularity.desc", "page": page_num 
+            "api_key": api_key,
+            "language": "en-US",
+            "primary_release_date.gte": RELEASE_DATE_START,
+            "primary_release_date.lte": RELEASE_DATE_END,
+            "sort_by": "popularity.desc",
+            "page": page_num,
         }
-        res = requests.get(url, params=params)
-        if res.status_code == 200:
-            movies.extend(res.json().get("results", []))
-            time.sleep(0.1)
-    
-    print(f"✅ Picked up {len(movies)} base movies!")
+
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            movies.extend(response.json().get("results", []))
+
+        time.sleep(API_RATE_LIMIT_DELAY)
+
+    print(f"   ✅ Fetched {len(movies)} base movies")
     return movies
 
-# ==========================================
-# 2. EXTRACT: Tables 2 & 3 (Details & Credits)
-# ==========================================
-def fetch_details_and_credits(api_key, movie_ids):
-    """Loops through movie IDs to get Budgets and Actors."""
+
+# =============================================================================
+# EXTRACT: Fetch Movie Details & Credits
+# =============================================================================
+
+def fetch_movie_details(api_key: str, movie_id: int) -> dict | None:
+    """Fetch detailed information for a single movie."""
+    url = f"{TMDB_BASE_URL}/movie/{movie_id}"
+    response = requests.get(url, params={"api_key": api_key})
+
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+
+def fetch_movie_credits(api_key: str, movie_id: int) -> dict | None:
+    """Fetch cast and crew credits for a single movie."""
+    url = f"{TMDB_BASE_URL}/movie/{movie_id}/credits"
+    response = requests.get(url, params={"api_key": api_key})
+
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+
+def fetch_details_and_credits(
+    api_key: str, movie_ids: list[int]
+) -> tuple[list[dict], list[dict]]:
+    """
+    Fetch details and credits for multiple movies.
+
+    Args:
+        api_key: TMDB API authentication key
+        movie_ids: List of movie IDs to fetch data for
+
+    Returns:
+        Tuple of (details_list, credits_list)
+    """
     details_list = []
     credits_list = []
-    
-    print(f"\n🕵️‍♂️ 2. Fetching Details & Credits for {len(movie_ids)} specific movies...")
-    
-    # We loop through every single ID we collected in step 1!
-    for count, movie_id in enumerate(movie_ids, 1):
-        
-        # Print a progress update every 20 movies so we know it's not frozen
-        if count % 20 == 0:
-            print(f"   ...processed {count}/{len(movie_ids)} movies...")
+    total_movies = len(movie_ids)
 
-        # -- Get Details (Budget, Revenue, Runtime) --
-        det_url = f"https://api.themoviedb.org/3/movie/{movie_id}"
-        det_res = requests.get(det_url, params={"api_key": api_key})
-        if det_res.status_code == 200:
-            details_list.append(det_res.json())
+    print(f"\n🕵️ Step 2: Fetching details & credits for {total_movies} movies...")
 
-        # -- Get Credits (Cast & Crew) --
-        cred_url = f"https://api.themoviedb.org/3/movie/{movie_id}/credits"
-        cred_res = requests.get(cred_url, params={"api_key": api_key})
-        if cred_res.status_code == 200:
-            credits_list.append(cred_res.json())
+    for count, movie_id in enumerate(movie_ids, start=1):
+        if count % PROGRESS_LOG_INTERVAL == 0:
+            print(f"   Processing: {count}/{total_movies} movies...")
 
-        time.sleep(0.1) # CRITICAL: Be polite to TMDB's servers
-        
-    print(f"✅ Collected details for {len(details_list)} movies!")
-    print(f"✅ Collected credits for {len(credits_list)} movies!")
-    
+        details = fetch_movie_details(api_key, movie_id)
+        if details:
+            details_list.append(details)
+
+        credits = fetch_movie_credits(api_key, movie_id)
+        if credits:
+            credits_list.append(credits)
+
+        time.sleep(API_RATE_LIMIT_DELAY)
+
+    print(f"   ✅ Collected {len(details_list)} movie details")
+    print(f"   ✅ Collected {len(credits_list)} movie credits")
+
     return details_list, credits_list
 
-# ==========================================
-# 3. LOAD (The Universal Pandas Loader)
-# ==========================================
-def load_table_to_postgres(data_list, table_name):
-    """A reusable function to load any list of dictionaries into a raw table."""
-    if not data_list:
-        return
-        
-    df = pd.DataFrame(data_list)
-    
-    # --- THE FIX: Shrink-wrapping dictionaries into text strings ---
-    # We look at every column. If a cell contains a list or a dictionary, 
-    # we convert it into a pure JSON text string so Postgres doesn't panic.
+
+# =============================================================================
+# LOAD: Push Data to PostgreSQL
+# =============================================================================
+
+def serialize_complex_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert dict and list columns to JSON strings."""
     for col in df.columns:
-        df[col] = df[col].apply(lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x)
-    # ---------------------------------------------------------------
+        df[col] = df[col].apply(
+            lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x
+        )
+    return df
 
-    # Safety check for duplicates if 'id' exists
-    if 'id' in df.columns:
-        df = df.drop_duplicates(subset=['id'])
-        
-    print(f"🔨 Loading {len(df)} rows into 'raw.{table_name}'...")
-    
-    # Pandas will automatically create the table in our 'raw' schema
-    df.to_sql(table_name, engine, schema='raw', if_exists='replace', index=False)
 
-# ==========================================
-# 4. RUN THE PIPELINE
-# ==========================================
+def load_to_postgres(
+    data: list[dict], table_name: str, engine: Engine
+) -> None:
+    """
+    Load a list of dictionaries into a PostgreSQL raw table.
+
+    Args:
+        data: List of dictionaries to load
+        table_name: Target table name in the 'raw' schema
+        engine: SQLAlchemy database engine
+    """
+    if not data:
+        print(f"   ⚠️  No data to load for '{table_name}'")
+        return
+
+    df = pd.DataFrame(data)
+    df = serialize_complex_columns(df)
+    df["loaded_at"] = datetime.now(timezone.utc)
+
+    if "id" in df.columns:
+        df = df.drop_duplicates(subset=["id"])
+
+    print(f"   📥 Loading {len(df)} rows into 'raw.{table_name}'...")
+    df.to_sql(table_name, engine, schema="raw", if_exists="append", index=False)
+
+
+# =============================================================================
+# MAIN PIPELINE
+# =============================================================================
+
+def run_pipeline() -> None:
+    """Execute the complete TMDB data extraction and loading pipeline."""
+    print("🔐 Loading credentials...")
+    api_key = get_api_key()
+    engine = get_database_engine()
+
+    # Extract base movies
+    base_movies = fetch_base_movies(api_key, max_pages=DEFAULT_MAX_PAGES)
+    movie_ids = [movie["id"] for movie in base_movies]
+
+    # Extract details and credits
+    movie_details, movie_credits = fetch_details_and_credits(api_key, movie_ids)
+
+    # Load to PostgreSQL
+    print("\n📦 Step 3: Loading data into PostgreSQL...")
+    load_to_postgres(base_movies, "raw_movies", engine)
+    load_to_postgres(movie_details, "raw_movie_details", engine)
+    load_to_postgres(movie_credits, "raw_movie_credits", engine)
+
+    print("\n🎉 Pipeline complete! All raw tables have been loaded.")
+
+
 if __name__ == "__main__":
-    
-    # Step 1: Get the base movies
-    base_movies = fetch_base_movies(TMDB_API_KEY, max_pages=5)
-    
-    # Step 2: Extract just the IDs from those movies to power our loop
-    movie_ids_to_fetch = [movie['id'] for movie in base_movies]
-    
-    # Step 3: Get the detailed data using those IDs
-    movie_details, movie_credits = fetch_details_and_credits(TMDB_API_KEY, movie_ids_to_fetch)
-    
-    print("\n📦 3. Pushing everything to PostgreSQL...")
-    
-    # Step 4: Load all three tables into the raw schema!
-    load_table_to_postgres(base_movies, "raw_movies")
-    load_table_to_postgres(movie_details, "raw_movie_details")
-    load_table_to_postgres(movie_credits, "raw_movie_credits")
-    
-    print("\n🎉 ALL DONE! Your raw database is fully loaded.")
+    run_pipeline()
