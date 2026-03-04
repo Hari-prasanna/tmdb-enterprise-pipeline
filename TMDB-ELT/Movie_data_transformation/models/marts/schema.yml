@@ -8,7 +8,7 @@ models:
         description: "primary key"
         tests:
          - unique
-         - not null
+         - not_null
 
   - name: fact_movie_financials
     description: "Metrics and ROI calculations"
@@ -17,7 +17,7 @@ models:
         description: "foreign key linking to dim_movie"
         tests:
           - unique
-          - not null
+          - not_null
           - relationships:
               arguments:
                 to: ref('dim_movie')
