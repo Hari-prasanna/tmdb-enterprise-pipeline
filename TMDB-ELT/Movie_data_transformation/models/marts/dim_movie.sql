@@ -5,7 +5,7 @@ stg_movie_details AS (SELECT *
 FROM {{ ref('stg_raw_movie_details') }})
 
 select 
-	m.movie_id,
+	m.movie_id AS movie_id,
 	m.title,
 	m."language",
 	m.release_date,
