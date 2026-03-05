@@ -35,4 +35,4 @@ models:
     staging:
       +materialized: incremental
     marts:
-      +materialized: table
+      +materialized: incremental
