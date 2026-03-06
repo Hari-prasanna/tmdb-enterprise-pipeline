@@ -463,3 +463,416 @@ Running dbt transformations...
 [0m06:46:42  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
 Pipeline finished at: Sun Mar  1 07:46:44 CET 2026
 =====================================
+=====================================
+Pipeline started at: Mon Mar  2 06:50:03 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-03-01 to 2026-03-01 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+✅ Success! Data Upserted gracefully.
+🎉 Pipeline finished successfully!
+Running dbt transformations...
+[0m05:50:22  Running with dbt=1.10.19
+[0m05:50:23  Registered adapter: postgres=1.9.1
+[0m05:50:24  Found 3 models, 1 source, 447 macros
+[0m05:50:24  
+[0m05:50:24  Concurrency: 1 threads (target='prod')
+[0m05:50:24  
+[0m05:50:24  1 of 3 START sql view model marts.stg_weather .................................. [RUN]
+[0m05:50:24  1 of 3 OK created sql view model marts.stg_weather ............................. [[32mCREATE VIEW[0m in 0.15s]
+[0m05:50:24  2 of 3 START sql table model marts.fct_weather ................................. [RUN]
+[0m05:50:24  2 of 3 OK created sql table model marts.fct_weather ............................ [[32mSELECT 18348[0m in 0.12s]
+[0m05:50:24  3 of 3 START sql table model marts.fct_weather_daily ........................... [RUN]
+[0m05:50:24  3 of 3 OK created sql table model marts.fct_weather_daily ...................... [[32mSELECT 770[0m in 0.09s]
+[0m05:50:24  
+[0m05:50:24  Finished running 2 table models, 1 view model in 0 hours 0 minutes and 0.62 seconds (0.62s).
+[0m05:50:24  
+[0m05:50:24  [32mCompleted successfully[0m
+[0m05:50:24  
+[0m05:50:24  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
+Pipeline finished at: Mon Mar  2 06:50:26 CET 2026
+=====================================
+=====================================
+Pipeline started at: Tue Mar  3 08:59:47 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-03-02 to 2026-03-02 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+✅ Success! Data Upserted gracefully.
+🎉 Pipeline finished successfully!
+Running dbt transformations...
+[0m08:00:16  Running with dbt=1.10.19
+[0m08:00:17  Registered adapter: postgres=1.9.1
+[0m08:00:17  Found 3 models, 1 source, 447 macros
+[0m08:00:17  
+[0m08:00:17  Concurrency: 1 threads (target='prod')
+[0m08:00:17  
+[0m08:00:18  1 of 3 START sql view model marts.stg_weather .................................. [RUN]
+[0m08:00:18  1 of 3 OK created sql view model marts.stg_weather ............................. [[32mCREATE VIEW[0m in 0.18s]
+[0m08:00:18  2 of 3 START sql table model marts.fct_weather ................................. [RUN]
+[0m08:00:18  2 of 3 OK created sql table model marts.fct_weather ............................ [[32mSELECT 18588[0m in 0.14s]
+[0m08:00:18  3 of 3 START sql table model marts.fct_weather_daily ........................... [RUN]
+[0m08:00:18  3 of 3 OK created sql table model marts.fct_weather_daily ...................... [[32mSELECT 780[0m in 0.10s]
+[0m08:00:18  
+[0m08:00:18  Finished running 2 table models, 1 view model in 0 hours 0 minutes and 0.74 seconds (0.74s).
+[0m08:00:18  
+[0m08:00:18  [32mCompleted successfully[0m
+[0m08:00:18  
+[0m08:00:18  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
+Pipeline finished at: Tue Mar  3 09:00:20 CET 2026
+=====================================
+=====================================
+Pipeline started at: Wed Mar  4 08:42:40 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-03-03 to 2026-03-03 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+✅ Success! Data Upserted gracefully.
+🎉 Pipeline finished successfully!
+Running dbt transformations...
+[0m07:43:01  Running with dbt=1.10.19
+[0m07:43:02  Registered adapter: postgres=1.9.1
+[0m07:43:03  Found 3 models, 1 source, 447 macros
+[0m07:43:03  
+[0m07:43:03  Concurrency: 1 threads (target='prod')
+[0m07:43:03  
+[0m07:43:03  1 of 3 START sql view model marts.stg_weather .................................. [RUN]
+[0m07:43:03  1 of 3 OK created sql view model marts.stg_weather ............................. [[32mCREATE VIEW[0m in 0.23s]
+[0m07:43:03  2 of 3 START sql table model marts.fct_weather ................................. [RUN]
+[0m07:43:03  2 of 3 OK created sql table model marts.fct_weather ............................ [[32mSELECT 18828[0m in 0.14s]
+[0m07:43:03  3 of 3 START sql table model marts.fct_weather_daily ........................... [RUN]
+[0m07:43:03  3 of 3 OK created sql table model marts.fct_weather_daily ...................... [[32mSELECT 790[0m in 0.11s]
+[0m07:43:03  
+[0m07:43:03  Finished running 2 table models, 1 view model in 0 hours 0 minutes and 0.77 seconds (0.77s).
+[0m07:43:03  
+[0m07:43:03  [32mCompleted successfully[0m
+[0m07:43:03  
+[0m07:43:03  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
+Pipeline finished at: Wed Mar  4 08:43:04 CET 2026
+=====================================
+=====================================
+Pipeline started at: Wed Mar  4 12:11:20 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-03-03 to 2026-03-03 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+✅ Success! Data Upserted gracefully.
+🎉 Pipeline finished successfully!
+Running dbt transformations...
+[0m11:11:38  Running with dbt=1.10.19
+[0m11:11:38  Registered adapter: postgres=1.9.1
+[0m11:11:40  Found 3 models, 1 source, 447 macros
+[0m11:11:40  
+[0m11:11:40  Concurrency: 1 threads (target='prod')
+[0m11:11:40  
+[0m11:11:40  1 of 3 START sql view model marts.stg_weather .................................. [RUN]
+[0m11:11:40  1 of 3 OK created sql view model marts.stg_weather ............................. [[32mCREATE VIEW[0m in 0.17s]
+[0m11:11:40  2 of 3 START sql table model marts.fct_weather ................................. [RUN]
+[0m11:11:40  2 of 3 OK created sql table model marts.fct_weather ............................ [[32mSELECT 18828[0m in 0.14s]
+[0m11:11:40  3 of 3 START sql table model marts.fct_weather_daily ........................... [RUN]
+[0m11:11:41  3 of 3 OK created sql table model marts.fct_weather_daily ...................... [[32mSELECT 790[0m in 0.09s]
+[0m11:11:41  
+[0m11:11:41  Finished running 2 table models, 1 view model in 0 hours 0 minutes and 0.73 seconds (0.73s).
+[0m11:11:41  
+[0m11:11:41  [32mCompleted successfully[0m
+[0m11:11:41  
+[0m11:11:41  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
+Pipeline finished at: Wed Mar  4 12:11:42 CET 2026
+=====================================
+=====================================
+Pipeline started at: Thu Mar  5 08:45:20 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-03-04 to 2026-03-04 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+✅ Success! Data Upserted gracefully.
+🎉 Pipeline finished successfully!
+Running dbt transformations...
+[0m07:45:40  Running with dbt=1.10.19
+[0m07:45:40  Registered adapter: postgres=1.9.1
+[0m07:45:41  Found 3 models, 1 source, 447 macros
+[0m07:45:41  
+[0m07:45:41  Concurrency: 1 threads (target='prod')
+[0m07:45:41  
+[0m07:45:42  1 of 3 START sql view model marts.stg_weather .................................. [RUN]
+[0m07:45:42  1 of 3 OK created sql view model marts.stg_weather ............................. [[32mCREATE VIEW[0m in 0.27s]
+[0m07:45:42  2 of 3 START sql table model marts.fct_weather ................................. [RUN]
+[0m07:45:42  2 of 3 OK created sql table model marts.fct_weather ............................ [[32mSELECT 19068[0m in 0.14s]
+[0m07:45:42  3 of 3 START sql table model marts.fct_weather_daily ........................... [RUN]
+[0m07:45:42  3 of 3 OK created sql table model marts.fct_weather_daily ...................... [[32mSELECT 800[0m in 0.09s]
+[0m07:45:42  
+[0m07:45:42  Finished running 2 table models, 1 view model in 0 hours 0 minutes and 1.01 seconds (1.01s).
+[0m07:45:42  
+[0m07:45:42  [32mCompleted successfully[0m
+[0m07:45:42  
+[0m07:45:42  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
+Pipeline finished at: Thu Mar  5 08:45:44 CET 2026
+=====================================
+=====================================
+Pipeline started at: Thu Mar  5 10:47:02 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-03-04 to 2026-03-04 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+⚠️ Upsert failed: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+🔄 Retrying with basic append...
+Traceback (most recent call last):
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3309, in raw_connection
+    return self.pool.connect()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 178, in _do_get
+    self._dec_overflow()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 175, in _do_get
+    return self._create_connection()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 673, in __init__
+    self.__connect()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 661, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/el_weather.py", line 109, in load_to_postgres
+    df.to_sql(name='weather_data', con=engine, schema='raw', if_exists='append', index=False, method=insert_on_conflict_update)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/util/_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/core/generic.py", line 3109, in to_sql
+    return sql.to_sql(
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/io/sql.py", line 843, in to_sql
+    with pandasSQL_builder(con, schema=schema, need_transaction=True) as pandas_sql:
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/io/sql.py", line 908, in pandasSQL_builder
+    return SQLDatabase(con, schema, need_transaction)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/io/sql.py", line 1648, in __init__
+    con = self.exit_stack.enter_context(con.connect())
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3285, in connect
+    return self._connection_cls(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2448, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3309, in raw_connection
+    return self.pool.connect()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 178, in _do_get
+    self._dec_overflow()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 175, in _do_get
+    return self._create_connection()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 673, in __init__
+    self.__connect()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 661, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3309, in raw_connection
+    return self.pool.connect()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 178, in _do_get
+    self._dec_overflow()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 175, in _do_get
+    return self._create_connection()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 673, in __init__
+    self.__connect()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 661, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/el_weather.py", line 128, in <module>
+    load_to_postgres(df_formatted)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/el_weather.py", line 114, in load_to_postgres
+    df.to_sql(name='weather_data', con=engine, schema='raw', if_exists='append', index=False)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/util/_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/core/generic.py", line 3109, in to_sql
+    return sql.to_sql(
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/io/sql.py", line 843, in to_sql
+    with pandasSQL_builder(con, schema=schema, need_transaction=True) as pandas_sql:
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/io/sql.py", line 908, in pandasSQL_builder
+    return SQLDatabase(con, schema, need_transaction)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/pandas/io/sql.py", line 1648, in __init__
+    con = self.exit_stack.enter_context(con.connect())
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3285, in connect
+    return self._connection_cls(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2448, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3309, in raw_connection
+    return self.pool.connect()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 178, in _do_get
+    self._dec_overflow()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 175, in _do_get
+    return self._create_connection()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 673, in __init__
+    self.__connect()
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 661, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+  File "/Users/hp/Development/Data-Analytics-engineering-portfolio/weather-elt-pipeline/venv/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Running dbt transformations...
+[0m09:47:23  Running with dbt=1.10.19
+[0m09:47:24  Registered adapter: postgres=1.9.1
+[0m09:47:24  Found 3 models, 1 source, 447 macros
+[0m09:47:24  
+[0m09:47:24  Concurrency: 1 threads (target='prod')
+[0m09:47:24  
+[0m09:47:25  
+[0m09:47:25  Finished running  in 0 hours 0 minutes and 0.16 seconds (0.16s).
+[0m09:47:25  Encountered an error:
+Database Error
+  connection to server at "localhost" (::1), port 5432 failed: Connection refused
+  	Is the server running on that host and accepting TCP/IP connections?
+  connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+  	Is the server running on that host and accepting TCP/IP connections?
+  
+Pipeline finished at: Thu Mar  5 10:47:26 CET 2026
+=====================================
+=====================================
+Pipeline started at: Fri Mar  6 09:02:49 CET 2026
+Running Python Extraction...
+🚀 Starting Weather ELT Pipeline...
+📡 Fetching data from 2026-03-05 to 2026-03-05 for 10 cities...
+📦 Formatting and enriching data for all cities...
+🗄️ Sending 240 rows to the Postgres Bouncer...
+✅ Success! Data Upserted gracefully.
+🎉 Pipeline finished successfully!
+Running dbt transformations...
+[0m08:03:07  Running with dbt=1.10.19
+[0m08:03:08  Registered adapter: postgres=1.9.1
+[0m08:03:08  Found 3 models, 1 source, 447 macros
+[0m08:03:08  
+[0m08:03:08  Concurrency: 1 threads (target='prod')
+[0m08:03:08  
+[0m08:03:09  1 of 3 START sql view model marts.stg_weather .................................. [RUN]
+[0m08:03:09  1 of 3 OK created sql view model marts.stg_weather ............................. [[32mCREATE VIEW[0m in 0.20s]
+[0m08:03:09  2 of 3 START sql table model marts.fct_weather ................................. [RUN]
+[0m08:03:09  2 of 3 OK created sql table model marts.fct_weather ............................ [[32mSELECT 19308[0m in 0.16s]
+[0m08:03:09  3 of 3 START sql table model marts.fct_weather_daily ........................... [RUN]
+[0m08:03:10  3 of 3 OK created sql table model marts.fct_weather_daily ...................... [[32mSELECT 810[0m in 0.14s]
+[0m08:03:10  
+[0m08:03:10  Finished running 2 table models, 1 view model in 0 hours 0 minutes and 1.40 seconds (1.40s).
+[0m08:03:10  
+[0m08:03:10  [32mCompleted successfully[0m
+[0m08:03:10  
+[0m08:03:10  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3
+Pipeline finished at: Fri Mar  6 09:03:12 CET 2026
+=====================================
