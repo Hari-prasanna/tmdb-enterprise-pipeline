@@ -1,17 +1,15 @@
 name: Data Pipeline CI/CD
 
-# The Trigger: When does the robot wake up?
+# The Trigger: Wake up when code is pushed to main
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # 1. Spin up a temporary Postgres database in the cloud!
+    # 1. Spin up the temporary Postgres Database
     services:
       postgres:
         image: postgres:15
@@ -38,12 +36,12 @@ jobs:
         with:
           python-version: '3.9'
 
-      # 4. Install dependencies (The tools for the Robot)
+      # 4. Install dependencies
       - name: Install dependencies
         run: |
           pip install pandas requests sqlalchemy psycopg2-binary python-dotenv dbt-postgres
 
-      # 5. Run the Python Extraction (Load the temporary database)
+      # 5. Run the Python Extraction
       - name: Run Python ELT Script
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
@@ -52,7 +50,7 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_HOST: localhost
           DB_PORT: 5432
-        run: python load_movies.py  # <--- CHANGE THIS TO YOUR ACTUAL SCRIPT NAME!
+        run: python load_movies.py  # <--- CHANGE THIS NAME!
 
       # 6. Run dbt (The Health Inspector)
       - name: Run dbt build
