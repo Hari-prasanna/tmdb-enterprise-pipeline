@@ -1,0 +1,68 @@
+name: Data Pipeline CI/CD
+
+# The Trigger: When does the robot wake up?
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # 1. Spin up a temporary Postgres database in the cloud!
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      # 2. Download your code from the Vault
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 3. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      # 4. Install dependencies (The tools for the Robot)
+      - name: Install dependencies
+        run: |
+          pip install pandas requests sqlalchemy psycopg2-binary python-dotenv dbt-postgres
+
+      # 5. Run the Python Extraction (Load the temporary database)
+      - name: Run Python ELT Script
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_HOST: localhost
+          DB_PORT: 5432
+        run: python load_movies.py  # <--- CHANGE THIS TO YOUR ACTUAL SCRIPT NAME!
+
+      # 6. Run dbt (The Health Inspector)
+      - name: Run dbt build
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_HOST: localhost
+          DB_PORT: 5432
+        run: |
+          cd Movie_data_transformation
+          dbt debug --profiles-dir .
+          dbt build --profiles-dir .
