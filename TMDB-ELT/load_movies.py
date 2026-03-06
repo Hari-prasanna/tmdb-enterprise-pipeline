@@ -18,7 +18,7 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, Engine
-
+from typing import Optional
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
@@ -26,7 +26,7 @@ from sqlalchemy import create_engine, Engine
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
 RELEASE_DATE_START = "2026-01-01"
 RELEASE_DATE_END = "2026-12-31"
-DEFAULT_MAX_PAGES = 20
+DEFAULT_MAX_PAGES = 5
 API_RATE_LIMIT_DELAY = 0.1
 PROGRESS_LOG_INTERVAL = 20
 
@@ -57,21 +57,25 @@ def get_api_key() -> str:
     return os.getenv("TMDB_API_KEY")
 
 
+import json
+import os
+import time
+from datetime import datetime, timezone
+from typing import Optional, List, Dict, Tuple, Any  # Added these for 3.9 compatibility
+
+import pandas as pd
+import requests
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, Engine
+
+# ... (Configuration section remains the same)
+
 # =============================================================================
 # EXTRACT: Fetch Base Movies
 # =============================================================================
 
-def fetch_base_movies(api_key: str, max_pages: int = DEFAULT_MAX_PAGES) -> list[dict]:
-    """
-    Fetch base movie listings from TMDB discover endpoint.
-
-    Args:
-        api_key: TMDB API authentication key
-        max_pages: Maximum number of pages to fetch (default: 20)
-
-    Returns:
-        List of movie dictionaries from the discover endpoint
-    """
+def fetch_base_movies(api_key: str, max_pages: int = DEFAULT_MAX_PAGES) -> List[Dict[str, Any]]:
+    """Fetch base movie listings from TMDB discover endpoint."""
     url = f"{TMDB_BASE_URL}/discover/movie"
     movies = []
 
@@ -86,45 +90,37 @@ def fetch_base_movies(api_key: str, max_pages: int = DEFAULT_MAX_PAGES) -> list[
             "sort_by": "popularity.desc",
             "page": page_num,
         }
-
+        # ... (rest of logic remains the same)
         response = requests.get(url, params=params)
-
         if response.status_code == 200:
             movies.extend(response.json().get("results", []))
-
         time.sleep(API_RATE_LIMIT_DELAY)
 
-    print(f"   ✅ Fetched {len(movies)} base movies")
     return movies
-
 
 # =============================================================================
 # EXTRACT: Fetch Movie Details & Credits
 # =============================================================================
 
-def fetch_movie_details(api_key: str, movie_id: int) -> dict | None:
+def fetch_movie_details(api_key: str, movie_id: int) -> Optional[dict]:
     """Fetch detailed information for a single movie."""
     url = f"{TMDB_BASE_URL}/movie/{movie_id}"
     response = requests.get(url, params={"api_key": api_key})
-
-    if response.status_code == 200:
-        return response.json()
-    return None
+    return response.json() if response.status_code == 200 else None
 
 
-def fetch_movie_credits(api_key: str, movie_id: int) -> dict | None:
+def fetch_movie_credits(api_key: str, movie_id: int) -> Optional[dict]:
     """Fetch cast and crew credits for a single movie."""
     url = f"{TMDB_BASE_URL}/movie/{movie_id}/credits"
     response = requests.get(url, params={"api_key": api_key})
-
-    if response.status_code == 200:
-        return response.json()
-    return None
+    return response.json() if response.status_code == 200 else None
 
 
 def fetch_details_and_credits(
-    api_key: str, movie_ids: list[int]
-) -> tuple[list[dict], list[dict]]:
+    api_key: str, movie_ids: List[int]
+) -> Tuple[List[dict], List[dict]]:
+    # ... (Logic remains same, just updated type hints above)
+    # [Rest of your logic here]. 
     """
     Fetch details and credits for multiple movies.
 
