@@ -51,7 +51,7 @@ jobs:
           DB_HOST: localhost
           DB_PORT: 5432
         run: |
-          cd TMDB-ETL
+          cd TMDB-ELT
           python load_movies.py
 
       # 6. Run dbt (The Health Inspector)
@@ -63,6 +63,6 @@ jobs:
           DB_HOST: localhost
           DB_PORT: 5432
         run: |
-          cd TMDB-ETL/Movie_data_transformation
+          cd TMDB-ELT/Movie_data_transformation
           dbt debug --profiles-dir .
           dbt build --profiles-dir .
