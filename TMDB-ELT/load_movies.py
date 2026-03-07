@@ -13,12 +13,13 @@ import json
 import os
 import time
 from datetime import datetime, timezone
+from typing import Optional, List, Dict, Tuple, Any
 
 import pandas as pd
 import requests
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, Engine
-from typing import Optional
+from sqlalchemy import create_engine, Engine, text
+
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
@@ -57,19 +58,6 @@ def get_api_key() -> str:
     return os.getenv("TMDB_API_KEY")
 
 
-import json
-import os
-import time
-from datetime import datetime, timezone
-from typing import Optional, List, Dict, Tuple, Any  # Added these for 3.9 compatibility
-
-import pandas as pd
-import requests
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, Engine
-
-# ... (Configuration section remains the same)
-
 # =============================================================================
 # EXTRACT: Fetch Base Movies
 # =============================================================================
@@ -90,7 +78,7 @@ def fetch_base_movies(api_key: str, max_pages: int = DEFAULT_MAX_PAGES) -> List[
             "sort_by": "popularity.desc",
             "page": page_num,
         }
-        # ... (rest of logic remains the same)
+        
         response = requests.get(url, params=params)
         if response.status_code == 200:
             movies.extend(response.json().get("results", []))
@@ -119,8 +107,6 @@ def fetch_movie_credits(api_key: str, movie_id: int) -> Optional[dict]:
 def fetch_details_and_credits(
     api_key: str, movie_ids: List[int]
 ) -> Tuple[List[dict], List[dict]]:
-    # ... (Logic remains same, just updated type hints above)
-    # [Rest of your logic here]. 
     """
     Fetch details and credits for multiple movies.
 
@@ -171,7 +157,7 @@ def serialize_complex_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_to_postgres(
-    data: list[dict], table_name: str, engine: Engine
+    data: List[dict], table_name: str, engine: Engine
 ) -> None:
     """
     Load a list of dictionaries into a PostgreSQL raw table.
@@ -191,6 +177,12 @@ def load_to_postgres(
 
     if "id" in df.columns:
         df = df.drop_duplicates(subset=["id"])
+
+    # --- THE FIX: Build the 'raw' schema drawer ---
+    with engine.connect() as conn:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS raw;"))
+        conn.commit()
+    # ----------------------------------------------
 
     print(f"   📥 Loading {len(df)} rows into 'raw.{table_name}'...")
     df.to_sql(table_name, engine, schema="raw", if_exists="append", index=False)
