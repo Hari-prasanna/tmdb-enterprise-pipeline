@@ -50,7 +50,9 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_HOST: localhost
           DB_PORT: 5432
-        run: python load_movies.py  # <--- CHANGE THIS NAME!
+        run: |
+          cd TMDB-ETL
+          python load_movies.py
 
       # 6. Run dbt (The Health Inspector)
       - name: Run dbt build
@@ -61,6 +63,6 @@ jobs:
           DB_HOST: localhost
           DB_PORT: 5432
         run: |
-          cd Movie_data_transformation
+          cd TMDB-ETL/Movie_data_transformation
           dbt debug --profiles-dir .
           dbt build --profiles-dir .
