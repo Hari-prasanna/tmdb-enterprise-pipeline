@@ -50,7 +50,7 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_HOST: localhost
           DB_PORT: 5432
-        run: python your_python_script.py  # <--- CHANGE THIS NAME!
+        run: python load_movies.py  # <--- CHANGE THIS NAME!
 
       # 6. Run dbt (The Health Inspector)
       - name: Run dbt build
