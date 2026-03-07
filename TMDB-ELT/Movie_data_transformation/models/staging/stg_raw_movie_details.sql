@@ -28,7 +28,7 @@ SELECT
 	movie_id,
 	release_date,
 	title,
-	status,
+	status AS release_status,
 	runtime_minutes,
 	budget,
 	revenue,
